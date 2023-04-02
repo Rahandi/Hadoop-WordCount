@@ -1,0 +1,9 @@
+image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+container_name: datanode{{COUNT}}
+restart: always
+volumes:
+  - hadoop_datanode{{COUNT}}:/hadoop/dfs/data
+environment:
+  SERVICE_PRECONDITION: "namenode:9870"
+env_file:
+  - ../hadoop.env
