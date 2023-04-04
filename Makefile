@@ -1,11 +1,6 @@
 datanode = 1
 workernode = 1
 
-build:
-	mkdir -p .generated
-	hadoop com.sun.tools.javac.Main -d .generated WordCount.java
-	cd .generated && jar cf ../data/app/wc.jar WordCount*.class
-
 prepare:
 	cp ./docker/template.docker-compose.yml ./docker/docker-compose.yml 
 
@@ -32,6 +27,11 @@ prepare:
 
 up:
 	docker compose -f docker/docker-compose.yml up -d
+
+build:
+	docker exec namenode mkdir -p /data/app/.generated
+	docker exec namenode /bin/bash -c "HADOOP_CLASSPATH=\$${JAVA_HOME}lib/tools.jar hadoop com.sun.tools.javac.Main -d /data/app/.generated /data/app/WordCount.java"
+	docker exec namenode /bin/bash -c "cd /data/app/.generated && jar cf ../wc.jar WordCount*.class"
 
 run:
 	docker exec namenode hdfs dfs -mkdir -p /data/
